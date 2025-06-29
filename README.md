@@ -15,61 +15,36 @@ Workshop for summer bioinformatics day IBL
 - Download both .h5 files from github and save in a folder on your desktop
 
 
+## 2. Data analysis
+Now that we have everything set up we can start working in RStudio.
+
+### Useful links:
+- Zebrafish references:
+  - https://daniocell.nichd.nih.gov/
+  - https://zfin.org/
+- Seurat Website:
+    - https://satijalab.org/seurat/
+- Seurat commands cheat sheet:
+  - https://satijalab.org/seurat/articles/seurat5_essential_commands
 
 
-## 2. Packages to install in Rstudio
+
+### 2.1. Install packages in RStudio
 ```bash
-# Toolkit for single cell genomics developed by Satija Lab
 install.packages("Seurat")
-
-# allows users to install and manage packages from the Bioconductor project wich contains open source software
 install.packages("BiocManager")
-
-# One of the many packages to detected doublets
-BiocManager::install("scDblFinder")
+BiocManager::install("scDblFinder") # compile : yes, update all
+install.packages("restfulr") # In case library(scDblFinder) mentions this package is missing
+BiocManager::install("SingleCellExperiment")
+install.packages("tidyverse")
 ```
 
-
-## 3. Data analysis
-Now that we have everything set up and the packages installed that we will use during this workshop, we can start looking into the data.
-
-
-
-
-
-
-## 1. Install Python
-- Windows: https://www.python.org/ftp/python/3.13.5/python-3.13.5-amd64.exe
-  - (IMPORTANT: Check the box **Add python.exe to PATH** at the bottom in installation window)
-  - In Powershell (press Windows key + R, type Powershell, press Enter):
-    ```bash
-    python --version # to verify installation
-    ```
-- Mac: https://www.python.org/ftp/python/3.13.5/python-3.13.5-macos11.pkg
-    - In Terminal (press cmd + spacebar, type terminal, press Enter):
-      ```bash
-      python3 --version # to verify installation
-      ```
-
-## 2. Install Jupyter Lab
-- Windows Powershell:
-  ```bash
-  pip install jupyterlab
-  ```
-- Mac Terminal:
-  ```bash
-  pip3 install jupyterlab
-  ```
-
-## 3. Install R
-- Windows Powershell:
-  ```bash
-  winget show RProject.R
-  ```
-
-
-## 3. Load packages in Rstudio
+### 2.2. Load Libraries in RStudio
 ```bash
 library(Seurat)
 library(scDblFinder)
+library(hdf5r)
+library(SingleCellExperiment)
+library(ggplot2)
 ```
+
