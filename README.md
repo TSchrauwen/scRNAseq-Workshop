@@ -213,7 +213,7 @@ fish <- readRDS("fish_workshop.rds")
 ### 4.2 Run FindClusters for different resolutions
 ```bash
   fish <- FindClusters(object = fish, 
-               resolution = 5,  
+               resolution = 10,  
                algorithm = 4, 
                random.seed = 123, 
                verbose = T
@@ -228,11 +228,15 @@ fish <- readRDS("fish_workshop.rds")
   DimPlot(fish, label = T)
 ```
 Let's look at the result:  
-<img src="https://github.com/user-attachments/assets/8aa81931-c5f0-47b6-8dde-7e2d99372444" width="600" height="400">
+<img src="https://github.com/user-attachments/assets/813f279f-d7ba-4e2d-867f-fef09cf0f33a" width="600" height="400">
 
 
-With clustering resolution 5, we get 96 clusters. This ,depending on the dataset not only does not make biological sense, it also does not make it easy to annotate the clusters.
+
+With clustering resolution 10, we get 146 clusters. This, depending on the dataset not only does not make biological sense, it also does not make it easy to annotate the clusters.
 Try to find a resolution that makes sense.  
+> [!NOTE]
+> You only need to run the RunUMAP() command once.
+
 
 > [!TIP]
 > It is not needed to identify every possible cell type yet. One approach can be an initial clustering to distinguish tissues on a general level, and later on subcluster each tissue cluster again with another resolution to identify cell types per tissue.
@@ -241,6 +245,23 @@ Try to find a resolution that makes sense.
 Normally we would first annotate all our clusters before going into actual DEG analysis. While both steps use the same commands, the actual DEG analysis goes more in depth and is done with more parameters set in place.  
 
 ### 5.1 Annotation
+Let's try to identify which tissue type a certain cluster is. Do the following:
+- Set the Idents() of the fish object to "RNA_snn_res.0.1"
+- Choose a cluster
+- Run the FindMarkers command
+- Use online references such as DanioCell or Zfin to identify the tissue based on the genes that show up
+
+  ```bash
+  Idents(fish) <- "RNA_snn_res.0.1"
+
+  
+  ```
+> [!IMPORTANT]
+> If you end up getting an error saying that your memory limit was reached, perform the following steps<br/>
+> 1. Run: library(usethis)
+> 2. Run: usethis::edit_r_environ()
+> 3. Add this to the first line of the R.environ tab that opened (replace 16Gb with the amount of RAM your laptop has): R_MAX_VSIZE=16Gb
+> 4. Save and restart RStudio
 
 
 
