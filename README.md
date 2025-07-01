@@ -12,7 +12,8 @@ Workshop for summer bioinformatics day IBL
 - Mac: https://download1.rstudio.org/electron/macos/RStudio-2025.05.1-513.dmg
 
 ### 1.3. Data
-- Download both .h5 files from github and save in a folder on your desktop
+- Download all objects from the following link: \
+  https://leidenuniv1-my.sharepoint.com/:f:/g/personal/s4409728_vuw_leidenuniv_nl/EvmAL6jF6lVElRbVv3sjLe8BodEvQ8P_qTiYzufhwhimhQ?e=ronQEs
 
 
 ## 2. Data analysis
