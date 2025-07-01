@@ -125,7 +125,11 @@ An important step in the cell filtering process is the removal of low quality ce
 - cells with high mitochondrial gene content
 - doublets
 - emtpy droplets
-### <ins>3.1 High mitochondrial gene content<ins> 
+
+### <ins>3.1 Empty droplets<ins>
+Empty droplets are droplets in which no cell is present. This does not mean that they are completely negative for mRNA as they can contain ambient RNA. There are several packages such as SoupX to identify these empty droplets. Because for this data the CellRanger count algorithm was used, empty droplets are already filtered out and we can proceed to the next step.
+
+### <ins>3.2 High mitochondrial gene content<ins> 
 Cells with a high percentage of mitochondrial genes expressed can resemble dying cells, stressed cells and/or damaged cells.  
 It is important to filter these cells out as they are of low quality and can interfere with downstream analysis. Depending on your experiment you might use a different cut-off than here. Everything depends on the biological context in which you are working.  
 
@@ -157,13 +161,105 @@ VlnPlot(DMSO_seur_sub, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"),
 Check if the filtering succeeded  
 <img src="https://github.com/user-attachments/assets/c0626fdf-e87d-48c9-8ad6-5f455d4659ab" width="450" height="400">
 
-### <ins>3.2 Doublet removal<ins>
+### <ins>3.3 Doublet removal<ins>
 Doublets are droplets in which 2 cells are present. This results in the both of these cells being labelled with the same cellular barcode. Heterotypical doublets contain 2 different cell types and are easier to detect than homotypical doublets. A lot of different packages for doublet detection exist and are constantly released. 
 
-Here we use the package scDblFinder (https://github.com/plger/scDblFinder). Because this package is made for SingleCellExperiment (sce) objects and not Seurat objects, our seurat objects need to be converted. For the sake of time you can skip the processing part, and dive into the visualization after doublet detection instead.  
-In case you want to run the doublet detection process, here are the commands:
+Here we use the package scDblFinder (https://github.com/plger/scDblFinder). Because this package is made for SingleCellExperiment (sce) objects and not Seurat objects, our Seurat objects need to be converted. For the sake of time you can skip the processing part, and dive into the visualization after doublet detection instead. 
+
+Load the following objects into RStudio. These are processed with scDblFinder:
 ```bash
+DMSO_doublets <- readRDS("DMSO_for_doublets_workshop.rds")
+DMSO_Amp_doublets <- readRDS("DMSO_Amp_for_doublets_workshop.rds")
 ```
+Using the table() command it is possible to get the amount of cells in a certain non-numerical metadata group
+```bash
+table(DMSO_doublets$scDblFinder.class.30k)
+table(DMSO_Amp_doublets$scDblFinder.class.30k)
+```
+
+<ins>Questions:</ins>
+1. How many singlets and doublets are there in the DMSO and DMSO_Amp sample?
+2. Visualize nCount_RNA and nFeature_RNA for these objects using violin plots. Is there a difference in amount of genes/ the spread between doublets and singlets?  
+   <ins>Note:</ins> Plotting singlets vs doublets requires an identity change
+   ```bash
+       Idents(DMSO_doublets) <- "scDblFinder.class.30k"
+       Idents(DMSO_Amp_doublets) <- "scDblFinder.class.30k"
+    ```
+
+## <ins>3.Preprocessing: More downstream steps<ins>
+After cell filtering in which low quality cells are removed, the next part of preprocessing is count normalization, data scaling, pca determination, integration to remove batch effects, identifying neighbors for clustering, clustering and dimensionality reduction.  
+Because most of these steps require a lot of computational resources and time, we will not be doing them during this workshop and we will move to clustering instead.  
+A standard workflow would however look like this:
+  - ScaleData()
+  - RunPCA()
+  - IntegrateLayers()
+  - JoinLayers()
+  - FindNeighbors()
+  - FindClusters()
+  - RunUMAP()
+
+## <ins>4.Clustering<ins>
+Clustering is required to group similar cell types together so that:
+- cell types can be identified
+- rare cell types can be found
+- differential gene expression can be ran between different groups of cells
+
+In Seurat, the FindClusters() command is used. In here the resolution parameter determined the amount of clusters the dataset will be split in. A higher resolution means more clusters, a lower resolution less clusters. Let's run this command for different resolutions to find one that makes biological sense and allows us to clearly distinguish groups from each other so that they can be annotated.
+
+### 4.1 Load in the fish_workshop.rds object that has been fully preprocessed.
+```bash
+fish <- readRDS("fish_workshop.rds")
+```
+### 4.2 Run FindClusters for different resolutions
+```bash
+  fish <- FindClusters(object = fish, 
+               resolution = 5,  
+               algorithm = 4, 
+               random.seed = 123, 
+               verbose = T
+               )
+  
+  fish <- RunUMAP(object = fish, 
+                  seed.use = 123, 
+                  dims = 1:36, 
+                  reduction = "harmony", 
+                  reduction.name = "umap.harmony", 
+                  reduction.key = "UMAPHARMONY_")
+  DimPlot(fish, label = T)
+```
+Let's look at the result:  
+<img src="https://github.com/user-attachments/assets/8aa81931-c5f0-47b6-8dde-7e2d99372444" width="600" height="400">
+
+
+With clustering resolution 5, we get 96 clusters. This ,depending on the dataset not only does not make biological sense, it also does not make it easy to annotate the clusters.
+Try to find a resolution that makes sense.  
+
+> [!TIP]
+> It is not needed to identify every possible cell type yet. One approach can be an initial clustering to distinguish tissues on a general level, and later on subcluster each tissue cluster again with another resolution to identify cell types per tissue.
+
+## <ins>5.Annotation/DEG analysis<ins>
+Normally we would first annotate all our clusters before going into actual DEG analysis. While both steps use the same commands, the actual DEG analysis goes more in depth and is done with more parameters set in place.  
+
+### 5.1 Annotation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
