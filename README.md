@@ -34,18 +34,13 @@ Now that we have everything set up we can start working in RStudio.
 ```bash
 install.packages("Seurat")
 install.packages("BiocManager")
-BiocManager::install("scDblFinder") # compile : yes, update all
-install.packages("restfulr") # In case library(scDblFinder) mentions this package is missing
-BiocManager::install("SingleCellExperiment")
 install.packages("tidyverse")
 ```
 
 ### 2.2. Load Libraries in RStudio
 ```bash
 library(Seurat)
-library(scDblFinder)
 library(hdf5r)
-library(SingleCellExperiment)
 library(ggplot2)
 ```
 
