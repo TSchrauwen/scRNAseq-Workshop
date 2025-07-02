@@ -8,7 +8,8 @@ Workshop for summer bioinformatics day IBL.
 - [4. Preprocessing - Cell Filtering](#4-preprocessing---cell-filtering)
 - [5. Preprocessing: More downstream steps](#5-preprocessing-more-downstream-steps)
 - [6. Clustering](#6-clustering)
-- [7. Annotation/DEG analysis](#7-annotationdeg-analysis)
+- [7. Annotation](#7-annotation)
+- [8. DEG analysis](#8-deg-analysis)
 
 ## <ins>1. Preparation<ins>
 <ins>1.1. Install R (https://posit.co/download/rstudio-desktop/)<ins>
@@ -45,6 +46,7 @@ Now that we have everything set up we can start working in RStudio.
 install.packages("Seurat")
 install.packages("BiocManager")
 install.packages("tidyverse")
+install.packages("dplyr")
 ```
 
 #### <ins>2.2. Load libraries in RStudio<ins>
@@ -52,6 +54,7 @@ install.packages("tidyverse")
 library(Seurat)
 library(hdf5r)
 library(ggplot2)
+library(dplyr)
 ```
 
 #### <ins>2.3. Read in the data<ins>
@@ -103,12 +106,12 @@ Question 3: rownames() give the gene names. colnames() gives the cellular barcod
 ----------------------------------------------------------------------------------------------------------------------------------------
 
  
-#### <ins>2.5. Create a seurat objects. These are needed in order to work with the Seurat scRNAseq package<ins>  
+#### <ins>2.5. Create a seurat objects<ins>  
 
-A Seurat object is a specialized data structure in R used for storing and analyzing scRNA-seq data. It's the core component of the Seurat package.
+A Seurat object is a specialized data structure in R used for storing and analyzing scRNA-seq data. It's the core component of the Seurat package and is needed in order to work with the Seurat scRNAseq package.
 
 This step contains an initial filtering step. It is not required to do this filtering yet but it will need to happen at some point anyway. Several parameters require explanation:
-- __object__ = the object name as which you loaded in your data
+- __counts__ = the count matrix name as which you loaded in your data
 - __project__ = the identity name you want to give all of the cells inside your object. This can for example be the type of treatment.
 - __min.cells__ = this paramater will define the minimum amount of cells in which genes need to be expressed. Genes expressed in less cells than this value will be filtered out.
 - __min.percent__ = the minimum amount of features each cell should contain. Cells with fewer genes will be filtered out
@@ -144,11 +147,10 @@ Run the following commands and see if you can find the answers to the following 
 
 <details>
 <summary>Answers</summary>
-Question 1: A dgCMatrix is a specific type of sparse matrix class in R. It only stores non-zero values, making it memory-efficient for datasets with many zeros such as scRNAseq. Using dgCMatrix saves significant memory compared to dense matrices.<br />
+Question 1: DMSO has 27438 samples (cells) and 23793 features (genes). DMSO_Amp has 24484 samples (cells) and  23699 features genes).<br />
 <br />
-Question 2: DMSO_mtx has 25432 rows and 27489 columns. DMSO_Amp has 25432 rows and 24514 columns.<br />
+Question 2: nCount_RNA shows the total amount of sequenced transcripts per cell. nFeature_RNA shows the total amount of genes per cell.<br />
 <br />
-Question 3: rownames() give the gene names. colnames() gives the cellular barcodes. These refer to the barcodes of a gel bead droplet to distinguish between cells.<br />
 </details>
 ----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -160,6 +162,11 @@ Merging of data is at some point needed in order to intgrate the data (removal o
 
 ```bash
 fish_merged <- merge(DMSO_seur, y = DMSO_Amp_seur, add.cell.ids = TRUE)
+```
+
+If you check this merged object out you will see that both samples are present in different count layers.
+```bash
+fish_merged
 ```
 
 ## <ins>4. Preprocessing - Cell Filtering<ins>
@@ -201,7 +208,7 @@ Using the subset() command we will filter out cells with percent.mt > 10%
 fish_merged_sub <- subset(fish_merged, subset = percent.mt < 10)
 VlnPlot(fish_merged_sub, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"), pt.size = 0)
 ```
-Check if the filtering succeeded  
+Check if the filtering succeeded by plotting a violin plot.<br />
 <img src="https://github.com/user-attachments/assets/102a23dc-f6d2-4123-8ccd-0fc3190b7fcb" width="450" height="400">
 
 
@@ -228,15 +235,13 @@ table(DMSO_Amp_doublets$scDblFinder.class.30k)
    ```bash
    Idents(DMSO_doublets) <- "scDblFinder.class.30k"
    Idents(DMSO_Amp_doublets) <- "scDblFinder.class.30k"
-    ```
+   ```
 
 
 <details>
 <summary>Click to see the Violin plots for the singlets and doublets</summary>
 <img src="https://github.com/user-attachments/assets/7aef7615-b7cb-4faa-b04a-b042ed585ec7" width="600" height="400">
 <img src="https://github.com/user-attachments/assets/4117afa4-3342-46b1-bb5d-98484d0e507a" width="600" height="400">
-
-
 
 </details>
 
@@ -290,6 +295,7 @@ Let's look at the result:
 With clustering resolution 10, we get 146 clusters. This, depending on the dataset not only does not make biological sense, it also does not make it easy to annotate the clusters.
 Try to find a resolution that makes sense.  
 
+
 > [!TIP]
 > You only need to run the RunUMAP() command once.
 
@@ -297,7 +303,14 @@ Try to find a resolution that makes sense.
 > [!TIP]
 > It is not needed to identify every possible cell type yet. One approach can be an initial clustering to distinguish tissues on a general level, and later on subcluster each tissue cluster again with another resolution to identify cell types per tissue.
 
-## <ins>7. Annotation/DEG analysis<ins>
+<details>
+<summary>My clustering resolution</summary>
+I chose to run the first clustering with resolution 0.1. This so I could first annotate all the tissues. I afterwards subclustered each tissue with a different resolution that made the most biological sense to find the subtypes.<br />
+<br />
+<img src="https://github.com/user-attachments/assets/bf28bddb-934b-45d7-b1e3-2a4d5fab114f" width="600" height="400">
+</details>
+
+## <ins>7. Annotation<ins>
 Normally we would first annotate all our clusters before going into actual DEG analysis. While both steps use the same commands, the actual DEG analysis goes more in depth and is done with more parameters set in place.  
 
 ### 7.1 Annotation
@@ -340,7 +353,77 @@ Let's try to identify which tissue type a certain cluster is. Do the following:
 > 4. Save and restart RStudio
 
 
-install.packages("scDblFinder")
+## <ins>8. DEG analysis<ins>
+Lets now do some DEG analysis. DEG or differential expressed gene analysis in single-cell RNA sequencing identifies genes that are expressed differently between groups of cells or conditions.
+
+In order to run the DEG analysis between a tissue of the DMSO_Amp sample vs DMSO, we need to create an identifier in our data. Let's create a new metadata column that contains the sample name and the tissue name.
+```bash
+fish$sample.tissue <- paste0(fish$orig.ident, ".", fish$tissue_updated)
+```
+We can now check all groups in this column
+```bash
+table(fish$sample.tissue)
+```
+
+Lets run the following code for our DEG:
+```bash
+Idents(fish) <- "sample.tissue"
+markers <- FindMarkers(fish, ident.1 = "DMSO.Muscle", ident.2 = "DMSO_Amp.Muscle", min.pct = 0.25, logfc.threshold = 0.25)
+View(markers)
+```
+
+As you can see there are also genes present with high adjusted_p_values. These are not significant and we want to filter them out:
+```bash
+markers <- markers %>% filter(p_val_adj < 0.01)
+View(markers)
+```
+
+Last, lets make a heatmap using 2 different packages.
+First instead of plotting all genes, only take the top and bottom 20 differentially expressed genes. 
+```bash
+gene_order <- markers %>% arrange(desc(-avg_log2FC)) %>% pull(genes) %>% unique()
+markers$genes <- factor(markers$genes, levels = gene_order)
+
+top_genes <- top_n(markers, 20, avg_log2FC)
+bottom_genes <- top_n(markers, -20, avg_log2FC)
+
+markers_selection <- rbind(top_genes, bottom_genes)
+```
+
+#### ggplot2:
+```bash
+DEG_name <- paste0("DMSO_Amp vs DMSO")
+p <- ggplot(markers_selection, aes(x = DEG_name, y = genes, fill = avg_log2FC)) +
+  geom_tile() + scale_fill_gradient2(low = "blue", high = "red", mid = "white") +
+  ggtitle(paste0("DEGs for DMSO_Amp vs DMSO \nLog10 Harmony MAST") 
+```
+#### Complexheatmap:
+This package does not make plots based on dataframes but on matrices that can only hold numeric values. We therefore need to tweak out dataframe a bit.
+```bash
+markers_mtx <- markers_selection[, c("genes", "avg_log2FC")]
+markers_mtx
+markers_mtx$genes <- NULL
+markers_mtx <- as.matrix(markers_mtx)
+```
+
+Lets plot:
+```bash
+ComplexHeatmap::Heatmap(markers_mtx, 
+                        width = unit(4, "cm"),
+                        height = unit(10, "cm"),
+                        row_names_gp = gpar(fontsize = 5),
+                        column_names_gp = gpar(fontsize = 10),
+                        column_names_rot = 45,
+                        row_dend_width = unit(2, "cm"),
+                        row_dend_gp = gpar(lwd = 0.3),
+                        heatmap_legend_param = list(title = "avg_FoldChange"))
+```
+
+
+# Thank you for your participation!
+--------------------------------------------------------------------------------------------------
+Thomas Schrauwen MSc. Molecular Genetics & Biotechnology  t.schrauwen@umail.leidenuniv.nl
+--------------------------------------------------------------------------------------------------
 
 
 
