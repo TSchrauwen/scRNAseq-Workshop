@@ -45,6 +45,7 @@ Now that we have everything set up we can start working in RStudio.
 ```bash
 install.packages("Seurat")
 install.packages("BiocManager")
+install.packages("ggplot2")
 install.packages("tidyverse")
 install.packages("dplyr")
 ```
