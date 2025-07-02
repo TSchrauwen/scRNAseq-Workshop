@@ -51,16 +51,18 @@ The count matrices that are saved as .h5 files. These count matrices can be gene
 - Count matrix names:
   - DMSO_filtered_feature_bc_matrix.h5
   - DMSO_Amp_filtered_feature_bc_matrix.h5
- 
+
+First of all the working directory in RStudio needs to be changed to the location on your computer where the downloaded data is. In your file explorer go to the location and copy the full path from on top.
   ```bash
-  # Set the working directory location to the folder where you stored the downloaded data.
-  # Replace [Username] with your username on your pc.
-  setwd("C:\Users\[Username]\Desktop")
-  
+  # Set the working directory
+  setwd("<your_path>")
+  ```
+Second, load in the count matrices
+```bash
   # Load in the count matrices
   DMSO_mtx <- Read10X_h5(filename = "DMSO_filtered_feature_bc_matrix.h5")
   DMSO_Amp_mtx <- Read10X_h5(filename = "DMSO_Amp_filtered_feature_bc_matrix.h5")
-  ```
+```
 
 #### <ins>2.4. Check the output of both matrices. How are they structured? What information can you derive?<ins>
   ```bash
@@ -80,6 +82,16 @@ The count matrices that are saved as .h5 files. These count matrices can be gene
 > **Question 1:** What is the class of the DMSO matrix?\
 > **Question 2:** How many rows and columns do DMSO_mtx and DMSO_Amp_mtx have?\
 > **Question 3:** What output does rownames() and colnames() give you?
+
+<details>
+<summary>Answers</summary>
+Question 1: A dgCMatrix is a specific type of sparse matrix class in R. It only stores non-zero values, making it memory-efficient for datasets with many zeros such as scRNAseq. Using dgCMatrix saves significant memory compared to dense matrices.<br />
+<br />
+Question 2: DMSO_mtx has 25432 rows and 27489 columns. DMSO_Amp has 25432 rows and 24514 columns.<br />
+<br />
+Question 3: rownames() give the gene names. colnames() gives the cellular barcodes. These refer to the barcodes of a gel bead droplet to distinguish between cells.<br />
+</details>
+----------------------------------------------------------------------------------------------------------------------------------------
 
  
 #### <ins>2.5. Create a seurat objects. These are needed in order to work with the Seurat scRNAseq package<ins>  
@@ -119,6 +131,17 @@ Run the following commands and see if you can find the answers to the following 
   > [!NOTE]
   > **Question 1:** How many cells (samples) and how many features (genes) does the DMSO and the DMSO_Amp samples have?\
   > **Question 2:** What is shown in the nCount_RNA and the nFeature_RNA columns?
+
+
+<details>
+<summary>Answers</summary>
+Question 1: A dgCMatrix is a specific type of sparse matrix class in R. It only stores non-zero values, making it memory-efficient for datasets with many zeros such as scRNAseq. Using dgCMatrix saves significant memory compared to dense matrices.<br />
+<br />
+Question 2: DMSO_mtx has 25432 rows and 27489 columns. DMSO_Amp has 25432 rows and 24514 columns.<br />
+<br />
+Question 3: rownames() give the gene names. colnames() gives the cellular barcodes. These refer to the barcodes of a gel bead droplet to distinguish between cells.<br />
+</details>
+----------------------------------------------------------------------------------------------------------------------------------------
 
 
 ## <ins>3.Merging data<ins>
