@@ -2,7 +2,7 @@
 Workshop for summer bioinformatics day IBL
 
 ## Table of Contents
-- [1. Preparation](1-preparation)
+- [1. Preparation](#1-preparation)
 - [2. Data structure and metadata](#2-data-structure-and-metadata)
 - [3. Merging data](#3-merging-data)
 - [4. Preprocessing - Cell Filtering](#4-preprocessing---cell-filtering)
