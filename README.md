@@ -307,6 +307,8 @@ Try to find a resolution that makes sense.
 <summary>My clustering resolution</summary>
 I chose to run the first clustering with resolution 0.1. This so I could first annotate all the tissues. I afterwards subclustered each tissue with a different resolution that made the most biological sense to find the subtypes.<br />
 <br />
+<img src="https://github.com/user-attachments/assets/9171fee8-f601-4761-bebb-4a8bfc1273c0" width="600" height="400">
+
 <img src="https://github.com/user-attachments/assets/bf28bddb-934b-45d7-b1e3-2a4d5fab114f" width="600" height="400">
 </details>
 
@@ -331,16 +333,16 @@ Let's try to identify which tissue type a certain cluster is. Do the following:
 > **Question 3:** What tissue type is cluster 8 related to?\
 > **Question 4:** Can you find on Daniocell which cell type cluster 8 probably is?\
 > 
-> **Question 5:** What tissue type is cluster 10 related to?\
-> **Question 6:** Can you find on Daniocell which cell type cluster 10 probably is?
+> **Question 5:** What tissue type is cluster 9 related to?\
+> **Question 6:** Can you find on Daniocell which cell type cluster 9 probably is?
 
-<img src="https://github.com/user-attachments/assets/3a11265d-96b4-4380-ad5c-8bfd02a0c02c" width="600" height="400">
+<img src="https://github.com/user-attachments/assets/91164f44-06e4-470e-a473-d326eb34e7d4" width="600" height="400">
 
 <details>
 <summary>Click to see the tissue annotations</summary>
-  
-<img src="https://github.com/user-attachments/assets/c270c515-56d2-4009-b423-4e7b921fdb9e" width="600" height="400">  
 
+<img src="https://github.com/user-attachments/assets/1068302f-b18a-4ddc-9ecb-6287703ee6d4" width="600" height="400">  
+ 
 </details>
 
 
@@ -397,6 +399,9 @@ p <- ggplot(markers_selection, aes(x = DEG_name, y = genes, fill = avg_log2FC)) 
   geom_tile() + scale_fill_gradient2(low = "blue", high = "red", mid = "white") +
   ggtitle(paste0("DEGs for DMSO_Amp vs DMSO \nLog10 Harmony MAST") 
 ```
+<img width="437" alt="image" src="https://github.com/user-attachments/assets/454cfd40-96e0-4a15-9c62-97de5bffb871" />
+
+
 #### Complexheatmap:
 This package does not make plots based on dataframes but on matrices that can only hold numeric values. We therefore need to tweak out dataframe a bit.
 ```bash
@@ -419,10 +424,11 @@ ComplexHeatmap::Heatmap(markers_mtx,
                         heatmap_legend_param = list(title = "avg_FoldChange"))
 ```
 
+<img width="438" alt="image" src="https://github.com/user-attachments/assets/38a9eb23-45df-4775-99f8-7feb7fcbe297" />
 
 # Thank you for your participation!
 --------------------------------------------------------------------------------------------------
-Thomas Schrauwen MSc. Molecular Genetics & Biotechnology  t.schrauwen@umail.leidenuniv.nl
+Thomas Schrauwen MSc. Molecular Genetics & Biotechnology
 --------------------------------------------------------------------------------------------------
 
 
