@@ -1,5 +1,5 @@
 # scRNAseq-Workshop
-Workshop for summer bioinformatics day IBL
+Workshop for summer bioinformatics day IBL.
 
 ## Table of Contents
 - [1. Preparation](#1-preparation)
