@@ -310,8 +310,6 @@ Try to find a resolution that makes sense.
 I chose to run the first clustering with resolution 0.1. This so I could first annotate all the tissues. I afterwards subclustered each tissue with a different resolution that made the most biological sense to find the subtypes.<br />
 <br />
 <img src="https://github.com/user-attachments/assets/9171fee8-f601-4761-bebb-4a8bfc1273c0" width="600" height="400">
-
-<img src="https://github.com/user-attachments/assets/bf28bddb-934b-45d7-b1e3-2a4d5fab114f" width="600" height="400">
 </details>
 
 ## <ins>7. Annotation<ins>
