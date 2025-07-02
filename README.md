@@ -106,7 +106,7 @@ Question 3: rownames() give the gene names. colnames() gives the cellular barcod
 ----------------------------------------------------------------------------------------------------------------------------------------
 
  
-#### <ins>2.5. Create a seurat objects<ins>  
+#### <ins>2.5. Create Seurat objects<ins>  
 
 A Seurat object is a specialized data structure in R used for storing and analyzing scRNA-seq data. It's the core component of the Seurat package and is needed in order to work with the Seurat scRNAseq package.
 
