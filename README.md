@@ -191,8 +191,9 @@ We can calculate the percentage of mitochondrial gene content per cell using the
   ```bash
   fish_merged[["percent.mt"]] <- PercentageFeatureSet(object = fish_merged, pattern = "^mt-")
   ```
-We have now added this data to the metadata of our Seurat Object.
- <img width="663" alt="image" src="https://github.com/user-attachments/assets/86bf3dad-9657-401c-95cc-61796c00d911" />
+We have now added this data to the metadata of our Seurat Object.  
+
+<img width="574" alt="image" src="https://github.com/user-attachments/assets/e7050b07-27c3-4185-bbeb-6beaed67bb3b" />
 
 A good habit during cell filtering and data analysis is to use visualization methods. This allows you to get a clear idea on what you are doing and will result in better decisions.
 Let's visualize the total mRNA counts, total gene counts, and the mitochondrial percentage per cell using Violin Plots.
@@ -200,6 +201,7 @@ Let's visualize the total mRNA counts, total gene counts, and the mitochondrial 
 ```bash
 VlnPlot(fish_merged, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"), pt.size = 0)
 ```
+
 <img src="https://github.com/user-attachments/assets/6b38bebe-ca0d-4780-890f-319f275873ef" width="450" height="400">
 
 
