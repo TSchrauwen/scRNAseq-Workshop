@@ -46,7 +46,7 @@ library(ggplot2)
 ```
 
 #### <ins>2.3. Read in the data<ins>
-The count matrices that are saved as .h5 files. These count matrices can be generated using different methods, but for his experiment I used the 10X genomics CellRanger count() algorithm. Generating these matrices requires a reference genome so that gene names or symbols are correctly assigned. As this generation can take 30 minutes or longer to process on an HPC, I already prepared them.
+The count matrices that are saved as .h5 files. These count matrices can be generated using different methods, but for his experiment I used the 10X genomics CellRanger count() algorithm. Generating these matrices requires a reference genome so that gene names or symbols are correctly assigned. As this generation can take 30 minutes or longer to process on an HPC, we will skip this and use the downloaded matrices.
 
 - Count matrix names:
   - DMSO_filtered_feature_bc_matrix.h5
@@ -75,11 +75,12 @@ The count matrices that are saved as .h5 files. These count matrices can be gene
   - str()
   - rownames()
   - colnames()
+    
+> [!NOTE]
+> **Question 1:** What is the class of the DMSO matrix?\
+> **Question 2:** How many rows and columns do DMSO_mtx and DMSO_Amp_mtx have?\
+> **Question 3:** What output does rownames() and colnames() give you?
 
-- Questions:
-  1. What is the class of the DMSO matrix?
-  2. How many rows and columns do DMSO_mtx and DMSO_Amp_mtx have?
-  3. What output does rownames() and colnames() give you?
  
 #### <ins>2.5. Create a seurat objects. These are needed in order to work with the Seurat scRNAseq package<ins>  
 
@@ -114,20 +115,28 @@ Run the following commands and see if you can find the answers to the following 
   View(DMSO_Amp_seur@meta.data)
   ```
 
-  Questions:
-  1. How many cells (samples) and how many features (genes) does the DMSO and the DMSO_Amp samples have?
-  2. What is shown in the nCount_RNA and the nFeature_RNA columns?
 
+  > [!NOTE]
+  > **Question 1:** How many cells (samples) and how many features (genes) does the DMSO and the DMSO_Amp samples have?\
+  > **Question 2:** What is shown in the nCount_RNA and the nFeature_RNA columns?
+
+
+## <ins>3.Merging data<ins>
+Merging of data is at some point needed in order to intgrate the data (removal of batch effects and have similar biological cells overlap on UMAP plots). While it also allows for a better visualization, it is not always recommended to do early on. Merging data can conflict with the preprocessing which is why it is a better approach to first preprocess every sample individually and merge them after. For the sake of this workshop we will merge the objects as we cannot run the preprocessing anwyay in this timespan.
+
+```bash
+fish_merged <- merge(DMSO_seur, y = DMSO_Amp_seur, add.cell.ids = TRUE)
+```
 
       
 ## <ins>3.Preprocessing: Cell Filtering<ins>
-An important step in the cell filtering process is the removal of low quality cells such as :
+An important step in the cell filtering process is the removal of low quality cells such as:
 - cells with high mitochondrial gene content
 - doublets
 - emtpy droplets
 
 ### <ins>3.1 Empty droplets<ins>
-Empty droplets are droplets in which no cell is present. This does not mean that they are completely negative for mRNA as they can contain ambient RNA. There are several packages such as SoupX to identify these empty droplets. Because for this data the CellRanger count algorithm was used, empty droplets are already filtered out and we can proceed to the next step.
+Empty droplets are droplets in which no cells are present. This does not mean that they are completely negative for transcripts as they can contain ambient RNA. There are several packages such as SoupX to identify these empty droplets. Because for this data the CellRanger count algorithm was used, empty droplets are already filtered out and we can proceed to the next step.
 
 ### <ins>3.2 High mitochondrial gene content<ins> 
 Cells with a high percentage of mitochondrial genes expressed can resemble dying cells, stressed cells and/or damaged cells.  
@@ -140,7 +149,7 @@ For this dataset of * *Danio rerio* * they follow the pattern **mt-**
 
 We can calculate the percentage of mitochondrial gene content per cell using the following command
   ```bash
-  DMSO_seur[["percent.mt"]] <- PercentageFeatureSet(object = DMSO_seur, pattern = "^mt-")
+  fish_merged[["percent.mt"]] <- PercentageFeatureSet(object = fish_merged, pattern = "^mt-")
   ```
 We have now added this data to the metadata of our Seurat Object.
  <img width="663" alt="image" src="https://github.com/user-attachments/assets/86bf3dad-9657-401c-95cc-61796c00d911" />
@@ -149,17 +158,19 @@ A good habit during cell filtering and data analysis is to use visualization met
 Let's visualize the total mRNA counts, total gene counts, and the mitochondrial percentage per cell using Violin Plots.
 
 ```bash
-VlnPlot(DMSO_seur, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"), pt.size = 0)
+VlnPlot(fish_merged, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"), pt.size = 0)
 ```
-<img src="https://github.com/user-attachments/assets/4155eb82-c892-412a-ad45-87e80d3ce341" width="450" height="400">
+<img src="https://github.com/user-attachments/assets/6b38bebe-ca0d-4780-890f-319f275873ef" width="450" height="400">
 
-Using the subset() command we will filter out cells with mt.percent > 10%
+
+Using the subset() command we will filter out cells with percent.mt > 10%
 ```bash
-DMSO_seur_sub <- subset(DMSO_seur, subset = percent.mt < 10)
-VlnPlot(DMSO_seur_sub, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"), pt.size = 0)
+fish_merged_sub <- subset(fish_merged, subset = percent.mt < 10)
+VlnPlot(fish_merged_sub, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"), pt.size = 0)
 ```
 Check if the filtering succeeded  
-<img src="https://github.com/user-attachments/assets/c0626fdf-e87d-48c9-8ad6-5f455d4659ab" width="450" height="400">
+<img src="https://github.com/user-attachments/assets/102a23dc-f6d2-4123-8ccd-0fc3190b7fcb" width="450" height="400">
+
 
 ### <ins>3.3 Doublet removal<ins>
 Doublets are droplets in which 2 cells are present. This results in the both of these cells being labelled with the same cellular barcode. Heterotypical doublets contain 2 different cell types and are easier to detect than homotypical doublets. A lot of different packages for doublet detection exist and are constantly released. 
@@ -182,9 +193,19 @@ table(DMSO_Amp_doublets$scDblFinder.class.30k)
 2. Visualize nCount_RNA and nFeature_RNA for these objects using violin plots. Is there a difference in amount of genes/ the spread between doublets and singlets?  
    <ins>Note:</ins> Plotting singlets vs doublets requires an identity change
    ```bash
-       Idents(DMSO_doublets) <- "scDblFinder.class.30k"
-       Idents(DMSO_Amp_doublets) <- "scDblFinder.class.30k"
+   Idents(DMSO_doublets) <- "scDblFinder.class.30k"
+   Idents(DMSO_Amp_doublets) <- "scDblFinder.class.30k"
     ```
+
+
+<details>
+<summary>Click to see the Violin plots for the singlets and doublets</summary>
+<img src="https://github.com/user-attachments/assets/7aef7615-b7cb-4faa-b04a-b042ed585ec7" width="600" height="400">
+<img src="https://github.com/user-attachments/assets/4117afa4-3342-46b1-bb5d-98484d0e507a" width="600" height="400">
+
+
+
+</details>
 
 ## <ins>3.Preprocessing: More downstream steps<ins>
 After cell filtering in which low quality cells are removed, the next part of preprocessing is count normalization, data scaling, pca determination, integration to remove batch effects, identifying neighbors for clustering, clustering and dimensionality reduction.  
@@ -234,7 +255,8 @@ Let's look at the result:
 
 With clustering resolution 10, we get 146 clusters. This, depending on the dataset not only does not make biological sense, it also does not make it easy to annotate the clusters.
 Try to find a resolution that makes sense.  
-> [!NOTE]
+
+> [!TIP]
 > You only need to run the RunUMAP() command once.
 
 
@@ -247,15 +269,35 @@ Normally we would first annotate all our clusters before going into actual DEG a
 ### 5.1 Annotation
 Let's try to identify which tissue type a certain cluster is. Do the following:
 - Set the Idents() of the fish object to "RNA_snn_res.0.1"
-- Choose a cluster
-- Run the FindMarkers command
+- Run the FindMarkers command and replace the ident.1 parameter with the cluster number
 - Use online references such as DanioCell or Zfin to identify the tissue based on the genes that show up
 
   ```bash
   Idents(fish) <- "RNA_snn_res.0.1"
-
-  
+  markers <- FindMarkers(fish, ident.1 = 10, group.by = "RNA_snn_res.0.1")
+  head(markers)
   ```
+> [!NOTE]
+> **Question 1:** What tissue type is cluster 6 related to?\
+> **Question 2:** Can you find on Daniocell which cell type cluster 6 probably is?\
+>
+> **Question 3:** What tissue type is cluster 8 related to?\
+> **Question 4:** Can you find on Daniocell which cell type cluster 8 probably is?\
+> 
+> **Question 5:** What tissue type is cluster 10 related to?\
+> **Question 6:** Can you find on Daniocell which cell type cluster 10 probably is?
+
+<img src="https://github.com/user-attachments/assets/3a11265d-96b4-4380-ad5c-8bfd02a0c02c" width="600" height="400">
+
+<details>
+<summary>Click to see the tissue annotations</summary>
+  
+<img src="https://github.com/user-attachments/assets/c270c515-56d2-4009-b423-4e7b921fdb9e" width="600" height="400">  
+
+</details>
+
+
+   
 > [!IMPORTANT]
 > If you end up getting an error saying that your memory limit was reached, perform the following steps<br/>
 > 1. Run: library(usethis)
@@ -264,6 +306,7 @@ Let's try to identify which tissue type a certain cluster is. Do the following:
 > 4. Save and restart RStudio
 
 
+install.packages("scDblFinder")
 
 
 
