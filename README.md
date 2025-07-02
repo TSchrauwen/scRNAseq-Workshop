@@ -279,6 +279,7 @@ fish <- readRDS("fish_workshop.rds")
                   reduction = "harmony", 
                   reduction.name = "umap.harmony", 
                   reduction.key = "UMAPHARMONY_")
+
   DimPlot(fish, label = T)
 ```
 Let's look at the result:  
