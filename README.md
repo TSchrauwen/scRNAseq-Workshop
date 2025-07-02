@@ -117,15 +117,15 @@ This step contains an initial filtering step. It is not required to do this filt
 - __min.percent__ = the minimum amount of features each cell should contain. Cells with fewer genes will be filtered out
   
 ```bash
-DMSO_seur <- Seurat::CreateSeuratObject(object = DMSO_mtx,
+DMSO_seur <- Seurat::CreateSeuratObject(counts = DMSO_mtx,
                                         project = "DMSO", 
                                         min.cells = 3, 
                                         min.features = 200)
-  
-DMSO_Amp_seur <- Seurat::CreateSeuratObject(DMSO_Amp_mtx,
-                                          project = "DMSO_Amp", 
-                                          min.cells = 3, 
-                                          min.features = 200)
+
+DMSO_Amp_seur <- Seurat::CreateSeuratObject(counts = DMSO_Amp_mtx,
+                                            project = "DMSO_Amp", 
+                                            min.cells = 3, 
+                                            min.features = 200)
 ```
 
 Run the following commands and see if you can find the answers to the following questions:
