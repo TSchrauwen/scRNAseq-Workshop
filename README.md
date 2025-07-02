@@ -8,7 +8,7 @@ Workshop for summer bioinformatics day IBL.
 - [4. Preprocessing - Cell Filtering](#4-preprocessing---cell-filtering)
 - [5. Preprocessing: More downstream steps](#5-preprocessing-more-downstream-steps)
 - [6. Clustering](#6-clustering)
-- [7. Annotation/DEG analysis](#7-Annotation/DEG-analysis)
+- [7. Annotation/DEG analysis](#7-annotationdeg-analysis)
 
 ## <ins>1. Preparation<ins>
 <ins>1.1. Install R (https://posit.co/download/rstudio-desktop/)<ins>
