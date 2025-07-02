@@ -24,9 +24,9 @@ Workshop for summer bioinformatics day IBL.
 <ins>1.3. Data<ins>
 - Download all objects from the following link. Make sure you save it on a location that you can easily access later on. For this workshop it is recommended to just save it in a new folder on your desktop. \
 - Download link:
-  ```bash
+ 
   https://leidenuniv1-my.sharepoint.com/:f:/g/personal/s4409728_vuw_leidenuniv_nl/EvmAL6jF6lVElRbVv3sjLe8BodEvQ8P_qTiYzufhwhimhQ?e=ronQEs
-  ```
+
 
 ## <ins>2. Data structure and metadata<ins>
 Now that we have everything set up we can start working in RStudio.
