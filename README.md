@@ -399,7 +399,7 @@ markers_selection <- rbind(top_genes, bottom_genes)
 DEG_name <- paste0("DMSO_Amp vs DMSO")
 p <- ggplot(markers_selection, aes(x = DEG_name, y = genes, fill = avg_log2FC)) +
   geom_tile() + scale_fill_gradient2(low = "blue", high = "red", mid = "white") +
-  ggtitle(paste0("DEGs for DMSO_Amp vs DMSO \nLog10 Harmony MAST") 
+  ggtitle(paste0("DEGs for DMSO_Amp vs DMSO \nLog10 Harmony MAST")) 
 ```
 <img width="437" alt="image" src="https://github.com/user-attachments/assets/454cfd40-96e0-4a15-9c62-97de5bffb871" />
 
