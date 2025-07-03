@@ -384,6 +384,7 @@ View(markers)
 Last, lets make a heatmap using 2 different packages.
 First instead of plotting all genes, only take the top and bottom 20 differentially expressed genes. 
 ```bash
+fish$genes <- rownames(fish)
 gene_order <- markers %>% arrange(desc(-avg_log2FC)) %>% pull(genes) %>% unique()
 markers$genes <- factor(markers$genes, levels = gene_order)
 
