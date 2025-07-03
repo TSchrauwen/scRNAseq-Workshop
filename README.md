@@ -44,6 +44,7 @@ Now that we have everything set up we can start working in RStudio.
 #### <ins>2.1. Install packages in RStudio<ins>
 ```bash
 install.packages("Seurat")
+install.packages("hdf5r")
 install.packages("BiocManager")
 install.packages("tidyverse")
 install.packages("dplyr")
