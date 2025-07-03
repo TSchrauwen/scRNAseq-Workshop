@@ -437,8 +437,14 @@ Thomas Schrauwen MSc. Molecular Genetics & Biotechnology
 
 
 
-
-
+Cluster 6
+                 p_val avg_log2FC pct.1 pct.2 p_val_adj
+si:ch211-250g4.3     0   8.965624 0.993 0.017         0
+alas2                0   8.309077 0.985 0.015         0
+cahz                 0   8.105911 0.996 0.034         0
+hemgn                0   8.129431 0.979 0.019         0
+nt5c2l1              0   8.147188 0.948 0.017         0
+hbae1.1              0   8.553943 1.000 0.116         0
 
 
 
